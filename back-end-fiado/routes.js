@@ -3,7 +3,15 @@ var jwt = require('jsonwebtoken');
 const  conection  = require('./config/database');
 const pool = conection.conectionDB(); //pegando a conexão com o banco de dados
 
+const nodemailer = require('nodemailer') 
 
+var transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+      user: 'vendaempresa2019@gmail.com',
+      pass: 'sistemadistribuido2019'
+  }
+});
 
 
 const routes = new Router();
@@ -101,9 +109,35 @@ routes.post('/cliente', function(req, res){
             VALUES ('${req.body.idusu}', '${req.body.date}', '${req.body.valor}' , '${req.userIdempresa}'); `, 
             (error, ret) => {
               if (error) {
-                return res.status(401).json('ERROR')
+                return res.status(401).json('primeir ERROR')
               }
-              res.status(200).send(ret.rows[0]);
+              ///Adicionando função do email
+         
+              pool.query(`select cliente_email from  cliente where cliente_cpf = '${req.body.idusu}'	`, 
+              (error, ret) => {
+                if (error) {
+                   return res.status(401).json('ERROR');
+                  }
+                  console.log(ret.rows[0].cliente_email);
+                  let emailclienteenviado = ret.rows[0].cliente_email;
+                  const mailOptions = { // Define informações pertinentes ao E-mail que será enviado
+                    from: 'vendaempresa2019@gmail.com',
+                    to: `${emailclienteenviado}`,
+                    subject: 'Compra fiado',
+                    text: 'COMPRA A FIADO FEITA '
+                  }
+                  transporter.sendMail(mailOptions, (err, info) => { // Função que, efetivamente, envia o email.
+                    if (err) {
+                      return console.log(err)
+                    }
+                    
+                    console.log(info)
+                  })
+
+                 res.status(200).send(ret.rows);
+                })
+
+              //res.status(200).send(ret.rows[0]);
             })
 })
 
@@ -135,6 +169,9 @@ routes.put('/deletarVenda',function(req, res){
      })
  })
  
+ 
 
 
 module.exports = routes;
+
+
