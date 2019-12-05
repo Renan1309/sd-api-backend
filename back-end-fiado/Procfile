@@ -1,1 +1,1 @@
-web: yarn start
+web: node /back-end-fiado/server.js
