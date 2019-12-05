@@ -1,1 +1,1 @@
-web: node /back-end-fiado/server.js
+web: node server.js
