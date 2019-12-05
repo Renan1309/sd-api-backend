@@ -120,7 +120,7 @@ routes.post('/cliente', function(req, res){
                   }
                   console.log(ret.rows[0].cliente_email);
                   let emailclienteenviado = ret.rows[0].cliente_email;
-                  const mailOptions = { // Define informações pertinentes ao E-mail que será enviado
+                  const mailOptions = { // Define informações pertinentes ao E-mail que será enviado---
                     from: 'vendaempresa2019@gmail.com',
                     to: `${emailclienteenviado}`,
                     subject: 'Compra fiado',
